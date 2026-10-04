@@ -2,6 +2,9 @@ import brcypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import { Router } from 'express';
 import { dbConnect, user } from '../lib/signUp.ts';
+import dotenv from "dotenv";
+
+dotenv.config()
 
 const loginAUth = Router()
 
