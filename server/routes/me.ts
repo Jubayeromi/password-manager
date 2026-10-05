@@ -1,5 +1,6 @@
-import { Router } from 'express';
+import { Router,Request,Response } from 'express';
 import { authMiddleware } from '../middleware/authMiddleware';
+import {user} from '../lib/signUp.ts'
 
 
 const meAuth = Router()

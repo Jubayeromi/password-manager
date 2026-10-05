@@ -8,7 +8,7 @@ const Navbar = () => {
   const [showSignin, setshowSignin] = useState(false)
   const [showLogin, setshowLogin] = useState(false)
   const [login, setLogin] = useState({ email: "", password: "" })
-  const [eye, seteye] = useState(false)
+  const [eye, seteye] = useState(true)
   const [emailError, setEmailError] = useState(false)
 
   const handleLogin = (e: ChangeEvent<HTMLInputElement>) => {
