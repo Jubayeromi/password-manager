@@ -1,15 +1,19 @@
 
 import { useState, type ChangeEvent } from "react"
 import { loginAuth } from "../routes/login.ts"
+import { useAuth } from "../context/AuthContext";
 
 
 const Navbar = () => {
-
+  
   const [showSignin, setshowSignin] = useState(false)
   const [showLogin, setshowLogin] = useState(false)
   const [login, setLogin] = useState({ email: "", password: "" })
   const [eye, seteye] = useState(true)
   const [emailError, setEmailError] = useState(false)
+  
+  const { user, loading, logIn, logout } = useAuth();
+   if (loading) return null; 
 
   const handleLogin = (e: ChangeEvent<HTMLInputElement>) => {
     setLogin({ ...login, [e.target.name]: e.target.value })
