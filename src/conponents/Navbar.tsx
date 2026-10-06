@@ -84,7 +84,9 @@ const Navbar = () => {
             <span className="text-white">Checking session...</span>
           ) : user ? (
             <>
-              <span className="text-white">{user.gmail}</span>
+              <span className="font-['Space_Grotesk'] text-xl font-semibold tracking-wide text-white md:mr-5">
+                {user.gmail.split("@")[0]}
+              </span>
               <button onClick={handleLogout} className="bg-red-400 px-5 py-2 rounded-3xl text-lg text-green-950 font-bold transition-colors hover:bg-red-300 cursor-pointer active:scale-95">Log Out</button>
             </>
           ) : (
