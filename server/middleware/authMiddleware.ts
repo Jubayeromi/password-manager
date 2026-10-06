@@ -1,5 +1,6 @@
 import Jwt  from "jsonwebtoken"
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
+import { jwtSecret } from "../lib/env.ts";
 
 interface authRequest extends Request{
     userId:string
@@ -14,7 +15,7 @@ export const authMiddleware =(req:authRequest,res:Response, next:NextFunction)=>
     }
 
     try{
-const decoded = Jwt.verify(token, process.env.JWT_SECRET as string) as {userId:string}
+const decoded = Jwt.verify(token, jwtSecret) as {userId:string}
 req.userId = decoded.userId
 next()
     }catch(err){

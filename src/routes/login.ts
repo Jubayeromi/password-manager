@@ -12,6 +12,7 @@ export const loginAuth = async ([login,setLogin]: LoginState,setshowLogin:Dispat
     if(login.email.trim().endsWith("@gmail.com") && login.password.trim().length >= 8){
        const api= await fetch("http://localhost:3000/login", {
             method: "POST",
+            credentials:"include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(login),
         });

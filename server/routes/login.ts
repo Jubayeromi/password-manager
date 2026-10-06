@@ -2,9 +2,7 @@ import brcypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import { Router } from 'express';
 import { dbConnect, user } from '../lib/signUp.ts';
-import dotenv from "dotenv";
-
-dotenv.config()
+import { jwtSecret } from '../lib/env.ts';
 
 const loginAUth = Router()
 
@@ -25,7 +23,7 @@ loginAUth.post("/login", async (req, res) => {
             if (hashedPassword) {
                 const token = jwt.sign(
                     { userId: mailCheck._id },
-                    process.env.JWT_SECRET as string,
+                    jwtSecret,
                     { expiresIn: "7d" }
                 );
 
@@ -47,6 +45,16 @@ loginAUth.post("/login", async (req, res) => {
         console.error(err, "something went wrong here")
         res.status(400).send({ data: "something went wrong" })
     }
+})
+
+loginAUth.post("/logout", (_req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+    })
+    return res.status(200).json({ data: "you're logged out" })
 })
 
 export default loginAUth;

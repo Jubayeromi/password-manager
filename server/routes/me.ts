@@ -1,5 +1,5 @@
-import { Router,Request,Response } from 'express';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { Router, type Request, type Response } from 'express';
+import { authMiddleware } from '../middleware/authMiddleware.ts';
 import {user} from '../lib/signUp.ts'
 
 

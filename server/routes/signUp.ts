@@ -14,7 +14,6 @@ loginRouter.post("/signup",async (req: Request<{}, { data: string }, LoginBody>,
     try{
 
         const { email, password } = req.body;
-        console.log( email, password)
         if(email.trim().endsWith("@gmail.com") && password.trim().length >= 8){
             await dbConnect();
 

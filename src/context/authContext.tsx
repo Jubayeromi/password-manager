@@ -1,22 +1,6 @@
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-
-
-type User = {
-    _id: string,
-    email: string,
-
-} | null;
-
-
-type authType = {
-    user: User,
-    loading: boolean,
-    login: (email: string, password: string) => Promise<void>,
-    logout: () => Promise<void>
-}
-
-const authContext = createContext<authType | undefined>(undefined);
+import { useState, useEffect, type ReactNode } from "react";
+import { authContext, type User } from "./authContext";
 
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -27,64 +11,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const checkedLoggedIn = async () => {
             try {
-
                 const api = await fetch("http://localhost:3000/me", {
                     credentials: "include"
                 })
-                const response = await api.json()
-                if (!api.ok) {
-                    throw new Error("not logged in try again")
+                if (api.status === 401) {
+                    setUser(null)
+                    return
                 }
+
+                if (!api.ok) throw new Error(`Could not check login status (${api.status})`)
+
+                const response = await api.json()
                 setUser(response.data)
             } catch (err) {
-                console.error(err, "something went wrong")
+                console.error("Could not check login status:", err)
                 setUser(null)
             } finally {
-                setLoading(true)
+                setLoading(false)
             }
-
         }
         checkedLoggedIn();
-
     }, [])
 
-        const logIn = async (email: string, password: string) => {
+    const logIn = async (email: string, password: string) => {
         const res = await fetch("http://localhost:3000/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify({ email, password }),
         });
-          if (!res.ok) {
-            throw new Error("login failed");
+        const response = await res.json()
+        if (!res.ok) {
+            throw new Error(response.data ?? `Login failed (${res.status})`)
         }
 
-           const meRes = await fetch("http://localhost:3000/me", { credentials: "include" });
+        const meRes = await fetch("http://localhost:3000/me", { credentials: "include" });
+        if (!meRes.ok) throw new Error(`Could not load the signed-in user (${meRes.status})`)
         const meData = await meRes.json();
         setUser(meData.data);
     };
 
+    const signUp = async (email: string, password: string) => {
+        const res = await fetch("http://localhost:3000/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ email, password }),
+        });
+        if (!res.ok) throw new Error(`Sign up failed (${res.status})`)
 
-        const logout = async () => {
-        await fetch("http://localhost:3000/logout", {
+        await logIn(email, password)
+    };
+
+    const logout = async () => {
+        const res = await fetch("http://localhost:3000/logout", {
             method: "POST",
             credentials: "include",
         });
+        if (!res.ok) throw new Error(`Logout failed (${res.status})`)
         setUser(null);
     };
 
-       return (
-        <authContext.Provider value={{ user, loading, logIn, logout }}>
+    return (
+        <authContext.Provider value={{ user, loading, logIn, signUp, logout }}>
             {children}
         </authContext.Provider>
     );
 
-}
-
-export function useAuth() {
-    const context = useContext(authContext);
-    if (!context) {
-        throw new Error("useAuth must be used within AuthProvider");
-    }
-    return context;
 }

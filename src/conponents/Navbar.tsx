@@ -1,7 +1,6 @@
 
 import { useState, type ChangeEvent } from "react"
-import { loginAuth } from "../routes/login.ts"
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth.ts";
 
 
 const Navbar = () => {
@@ -11,13 +10,16 @@ const Navbar = () => {
   const [login, setLogin] = useState({ email: "", password: "" })
   const [eye, seteye] = useState(true)
   const [emailError, setEmailError] = useState(false)
+  const [loginError, setLoginError] = useState("")
   
-  const { user, loading, logIn, logout } = useAuth();
-   if (loading) return null; 
+  const { user, loading, logIn, signUp, logout } = useAuth();
 
   const handleLogin = (e: ChangeEvent<HTMLInputElement>) => {
     setLogin({ ...login, [e.target.name]: e.target.value })
-    if (e.target.name === "email") setEmailError(false)
+    if (e.target.name === "email") {
+      setEmailError(false)
+      setLoginError("")
+    }
 
   }
 
@@ -27,26 +29,44 @@ const Navbar = () => {
     setEmailError(!isValidGmail)
     try {
       if (login.email.trim().endsWith("@gmail.com") && login.password.trim().length >= 8) {
-        const url = await fetch('http://localhost:3000/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(login)
-        })
-        const response = await url.json()
-        console.log(response)
-        if (url.status === 201) {
-          setshowLogin(false)
-          setLogin({ email: "", password: "" })
-          setEmailError(false)
-        }
+        await logIn(login.email,login.password);
+        setshowLogin(false)
+        setLogin({ email: "", password: "" });
       } else {
+        setLoginError("Please enter a valid Gmail address and a password of at least 8 characters.")
         alert("pls write a valid email and password should be atleast 8 cherecter")
       }
     } catch (err) {
-      console.error(err, "someting in the frontend")
+      console.error(err, "Login failed")
+      setLoginError(err instanceof Error ? err.message : "Login failed. Please try again.")
     }
 
   }
+
+  const signupSubmit = async () => {
+    const isValidGmail = login.email.trim().toLowerCase().endsWith("@gmail.com")
+    setEmailError(!isValidGmail)
+    try {
+      if (isValidGmail && login.password.trim().length >= 8) {
+        await signUp(login.email, login.password)
+        setshowSignin(false)
+        setLogin({ email: "", password: "" })
+      } else {
+        alert("Please enter a valid Gmail address and a password of at least 8 characters.")
+      }
+    } catch (err) {
+      console.error("Sign up failed:", err)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+    } catch (err) {
+      console.error("Logout failed:", err)
+    }
+  }
+
   return (
     <nav>
       <div className="bg-green-950 flex justify-between p-3 px-20 md:p-5 md:px-30 w-full">
@@ -59,11 +79,20 @@ const Navbar = () => {
         </div>
 
 
-        <div className="flex gap-3">
-          <button onClick={() => setshowSignin(true)} className="bg-green-400 px-5 py-2 rounded-3xl text-lg text-green-950 font-bold transition-colors hover:bg-green-300 cursor-pointer active:scale-95">Sign Up</button>
-
-          <button onClick={() => setshowLogin(true)} className="bg-green-400 px-5 py-2 rounded-3xl text-lg text-green-950 font-bold transition-colors hover:bg-green-300 cursor-pointer active:scale-95">Log In</button>
-
+        <div className="flex items-center gap-3">
+          {loading ? (
+            <span className="text-white">Checking session...</span>
+          ) : user ? (
+            <>
+              <span className="text-white">{user.gmail}</span>
+              <button onClick={handleLogout} className="bg-red-400 px-5 py-2 rounded-3xl text-lg text-green-950 font-bold transition-colors hover:bg-red-300 cursor-pointer active:scale-95">Log Out</button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setshowSignin(true)} className="bg-green-400 px-5 py-2 rounded-3xl text-lg text-green-950 font-bold transition-colors hover:bg-green-300 cursor-pointer active:scale-95">Sign Up</button>
+              <button onClick={() => setshowLogin(true)} className="bg-green-400 px-5 py-2 rounded-3xl text-lg text-green-950 font-bold transition-colors hover:bg-green-300 cursor-pointer active:scale-95">Log In</button>
+            </>
+          )}
         </div>
       </div>
 
@@ -107,7 +136,7 @@ const Navbar = () => {
               </span>
             </div>
 
-            <button onClick={loginSubmit} className="w-full cursor-pointer active:scale-95 rounded bg-green-700 p-2 font-bold text-white">
+            <button onClick={signupSubmit} className="w-full cursor-pointer active:scale-95 rounded bg-green-700 p-2 font-bold text-white">
               Sign Up
             </button>
 
@@ -132,7 +161,7 @@ const Navbar = () => {
               <h2 id="login-title" className="mb-4 text-xl font-bold">
                 Log In
               </h2>
-              <span onClick={() => setshowLogin(false)} className="w-10 h-10 cursor-pointer active:scale-95 mb-2 bg-gray-500 rounded-md justify-center items-center flex"><img src="/cross.svg" alt="" /></span>
+              <span onClick={() => { setshowLogin(false); setLoginError("") }} className="w-10 h-10 cursor-pointer active:scale-95 mb-2 bg-gray-500 rounded-md justify-center items-center flex"><img src="/cross.svg" alt="" /></span>
             </div>
 
             <input onChange={handleLogin} value={login.email} className={`${emailError ? "" : "mb-3"} w-full rounded border p-2`} type="email" placeholder="Email" name="email" />
@@ -153,10 +182,13 @@ const Navbar = () => {
 
               </span>
             </div>
+            {loginError && (
+              <p role="alert" className="mb-3 text-sm text-red-700">
+                {loginError}
+              </p>
+            )}
 
-            <button onClick={() => {
-              loginAuth([login, setLogin], setshowLogin)
-            }} className="w-full cursor-pointer active:scale-95 rounded bg-green-700 p-2 font-bold text-white">
+            <button onClick={loginSubmit} className="w-full cursor-pointer active:scale-95 rounded bg-green-700 p-2 font-bold text-white">
               Log In
             </button>
 
