@@ -1,10 +1,14 @@
 import { useRef, useState, type ChangeEvent } from "react"
+import Table from "./Table.tsx"
+import { dataSubmit } from "../routes/dataSubmit.ts"
+
 
 const Manager = () => {
 
   const [eye, setEye] = useState(true)
 
   const [form, setform] = useState({site:"", userName:"",password:""})
+  const [entries, setEntries] = useState<{ id: string; site: string; userName: string; password: string }[]>([])
 
   const videoRef=useRef<HTMLVideoElement| null> (null)
 
@@ -13,7 +17,16 @@ const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
 }
 
 const handleSubmit= ()=>{
-console.log(form)
+  if (!form.site.trim() || !form.userName.trim() || !form.password.trim()) return
+  if(form.site.trim() !=="" && form.userName.trim() !=="" && form.password.trim() !==""){
+  
+    dataSubmit(form)
+    setEntries((currentEntries) => [
+      ...currentEntries,
+      { id: crypto.randomUUID(), ...form },
+    ])
+    setform({ site: "", userName: "", password: "" })
+  }
 }
 
 
@@ -58,6 +71,7 @@ videoRef.current?.play()
           </div>
         </div>
       </div>
+      <Table entries={entries} />
     </div>
   )
 }

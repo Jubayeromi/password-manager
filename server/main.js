@@ -4,6 +4,7 @@ import cors from 'cors'
 import loginAUth from './routes/login.ts';
 import cookieParser from "cookie-parser";
 import meAuth from './routes/me.ts';
+import saveRouter from './routes/saveData.ts'
 
 
 
@@ -23,6 +24,7 @@ app.use(loginRouter)
 
 app.use(loginAUth)
 app.use(meAuth)
+app.use(saveRouter)
 
 const port = 3000;
 

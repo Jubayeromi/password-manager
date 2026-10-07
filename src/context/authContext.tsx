@@ -5,7 +5,7 @@ import { authContext, type User } from "./authContext";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
