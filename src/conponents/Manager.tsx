@@ -36,7 +36,7 @@ const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
 throw new Error(`could not load sved items ${api.status}`)
       }
       const Data = await api.json();
-      console.log(Data)
+      
       setEntries(
         Data.data.map(
           (entry: {
