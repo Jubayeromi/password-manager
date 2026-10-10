@@ -1,9 +1,13 @@
-import { useRef, useState, type ChangeEvent } from "react"
+import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import Table from "./Table.tsx"
 import { dataSubmit } from "../routes/dataSubmit.ts"
+import { useAuth } from "../context/useAuth.ts";
+
+
 
 
 const Manager = () => {
+  const { user } = useAuth();
 
   const [eye, setEye] = useState(true)
 
@@ -16,23 +20,65 @@ const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
   setform({...form,[e.target.name]:e.target.value})
 }
 
+
+  const getData = async()=>{
+    if(!user){
+      setEntries([])
+      
+      return;
+    }
+    try{
+
+      const api = await fetch("http://localhost:3000/saved",{
+        credentials:"include"
+      })
+      if(!api.ok){
+throw new Error(`could not load sved items ${api.status}`)
+      }
+      const Data = await api.json();
+      console.log(Data)
+      setEntries(
+        Data.data.map(
+          (entry: {
+            _id:string;
+            site:string;
+            userName:string;
+            password:string;
+          }) => ({
+            id:entry._id,
+            site:entry.site,
+            userName:entry.userName,
+            password:entry.password
+          }),
+        ),
+      )
+    } catch(err){
+      console.error(err,"something went wrong")
+    }
+  }
+
+useEffect(() => {
+ 
+ getData()
+ void getData()
+  
+}, [user, entries])
+
+
 const handleSubmit= ()=>{
   if (!form.site.trim() || !form.userName.trim() || !form.password.trim()) return
   if(form.site.trim() !=="" && form.userName.trim() !=="" && form.password.trim() !==""){
   
     dataSubmit(form)
-    setEntries((currentEntries) => [
-      ...currentEntries,
-      { id: crypto.randomUUID(), ...form },
-    ])
+   
     setform({ site: "", userName: "", password: "" })
   }
 }
 
 
   return (
-    <div >
-      <div className="absolute inset-0 -z-10 bg-green-100 h-full w-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-77.5 w-77.5 rounded-full bg-green-400 opacity-20 blur-[100px]"></div></div>
+    <div className="max-h-auto h-auto">
+      <div className="absolute inset-0 -z-10 bg-green-100 h-full w-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-full w-77.5 rounded-full bg-green-400 opacity-20 blur-[100px]"></div></div>
       <div className="flex flex-col items-center w-full md:pt-20">
         <div className="text-center">
 
@@ -64,8 +110,11 @@ const handleSubmit= ()=>{
             </div>
             <button 
             onClick={()=>{
-              handleSubmit()
-videoRef.current?.play()
+              if(user && form.site.trim() !=='' && form.userName.trim() !=='' && form.password.trim() !==''){
+                handleSubmit()
+                videoRef.current?.play()
+                getData()
+              }
             }}
             className="border border-green-700 md:text-lg text-sm items-center justify-center active:scale-95 gap-2 px-3 cursor-pointer py-2 font-semibold rounded-full bg-green-500 flex"><video ref={videoRef}  className="md:h-10 md:w-10 w-5 h-5 bg-green-400 cursor-pointer active:scale-95 rounded-full" src="/doodle-color-49-plus-circle-hover-pinch.mp4"></video> Add Password</button>
           </div>
