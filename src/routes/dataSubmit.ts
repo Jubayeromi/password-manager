@@ -14,8 +14,8 @@ export const dataSubmit = async (form: PasswordForm) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(form),
         })
-        // const response = await api.json();
-        // console.log(response)
+        const response = await api.json();
+        console.log(response)
     } else{
         console.log("something went wrong here")
     }

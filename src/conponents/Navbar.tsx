@@ -30,8 +30,8 @@ const Navbar = () => {
     try {
       if (login.email.trim().endsWith("@gmail.com") && login.password.trim().length >= 8) {
         await logIn(login.email,login.password);
-        setshowLogin(false)
         setLogin({ email: "", password: "" });
+        setshowLogin(false)
       } else {
         setLoginError("Please enter a valid Gmail address and a password of at least 8 characters.")
         alert("pls write a valid email and password should be atleast 8 cherecter")

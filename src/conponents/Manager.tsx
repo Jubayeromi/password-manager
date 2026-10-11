@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent } from "react"
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react"
 import Table from "./Table.tsx"
 import { dataSubmit } from "../routes/dataSubmit.ts"
 import { useAuth } from "../context/useAuth.ts";
@@ -21,58 +21,55 @@ const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
 }
 
 
-  const getData = async()=>{
-    if(!user){
-      setEntries([])
-      
-      return;
-    }
-    try{
+  const getData = useCallback(async()=>{
+    if (!user) return []
 
-      const api = await fetch("http://localhost:3000/saved",{
-        credentials:"include"
-      })
-      if(!api.ok){
+    const api = await fetch("http://localhost:3000/saved", {
+      credentials: "include"
+    })
+    if (!api.ok) {
 throw new Error(`could not load sved items ${api.status}`)
-      }
-      const Data = await api.json();
-      
-      setEntries(
-        Data.data.map(
-          (entry: {
-            _id:string;
-            site:string;
-            userName:string;
-            password:string;
-          }) => ({
-            id:entry._id,
-            site:entry.site,
-            userName:entry.userName,
-            password:entry.password
-          }),
-        ),
-      )
-    } catch(err){
-      console.error(err,"something went wrong")
     }
-  }
+
+    const Data = await api.json()
+    return Data.data.map(
+      (entry: {
+        _id: string;
+        site: string;
+        userName: string;
+        password: string;
+      }) => ({
+        id: entry._id,
+        site: entry.site,
+        userName: entry.userName,
+        password: entry.password
+      }),
+    )
+  }, [user])
 
 useEffect(() => {
- 
- getData()
- void getData()
-  
-}, [user, entries])
+  if (!user) return
 
+  let isCurrent = true
+  void getData()
+    .then((data) => {
+      if (isCurrent) setEntries(data)
+    })
+    .catch((err) => {
+      console.error(err, "something went wrong")
+    })
 
-const handleSubmit= ()=>{
-  if (!form.site.trim() || !form.userName.trim() || !form.password.trim()) return
-  if(form.site.trim() !=="" && form.userName.trim() !=="" && form.password.trim() !==""){
-  
-    dataSubmit(form)
-   
-    setform({ site: "", userName: "", password: "" })
+  return () => {
+    isCurrent = false
   }
+}, [getData, user])
+
+
+const handleSubmit = async () => {
+  if (!form.site.trim() || !form.userName.trim() || !form.password.trim()) return
+
+  await dataSubmit(form)
+  setform({ site: "", userName: "", password: "" })
 }
 
 
@@ -109,18 +106,22 @@ const handleSubmit= ()=>{
               </span>
             </div>
             <button 
-            onClick={()=>{
+            onClick={async () => {
               if(user && form.site.trim() !=='' && form.userName.trim() !=='' && form.password.trim() !==''){
-                handleSubmit()
+                await handleSubmit()
                 videoRef.current?.play()
-                getData()
+                try {
+                  setEntries(await getData())
+                } catch (err) {
+                  console.error(err, "something went wrong")
+                }
               }
             }}
             className="border border-green-700 md:text-lg text-sm items-center justify-center active:scale-95 gap-2 px-3 cursor-pointer py-2 font-semibold rounded-full bg-green-500 flex"><video ref={videoRef}  className="md:h-10 md:w-10 w-5 h-5 bg-green-400 cursor-pointer active:scale-95 rounded-full" src="/doodle-color-49-plus-circle-hover-pinch.mp4"></video> Add Password</button>
           </div>
         </div>
       </div>
-      <Table entries={entries} />
+      <Table entries={user ? entries : []} />
     </div>
   )
 }
