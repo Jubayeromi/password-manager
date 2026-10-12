@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { dbConnect, userData } from "../lib/dataDb.ts";
 import { authMiddleware } from "../middleware/authMiddleware.ts";
+import { encryptText } from "../lib/encryption.ts";
 
 
 
@@ -12,9 +13,12 @@ saveRouter.post("/save", authMiddleware ,async (req,res)=>{
     try{
     if(site.trim() && userName.trim() && password.trim()){
        await dbConnect();
+       const encrypted = encryptText(password)
       await userData.create({
         user: req.userId,
-        site,userName,password
+        site: site.trim(),
+        userName :userName.trim(),
+        password: JSON.stringify(encrypted)
     })
 return res.status(201).json({data:"data submitted"})
     } else{
