@@ -10,7 +10,7 @@ type LoginState = [login: Login, setLogin: Dispatch<SetStateAction<Login>>];
 export const loginAuth = async ([login,setLogin]: LoginState,setshowLogin:Dispatch<SetStateAction<boolean>>) => {
     try{
     if(login.email.trim().endsWith("@gmail.com") && login.password.trim().length >= 8){
-      const LOGIN =import.meta.env.BACKEND_URL || "http://localhost:3000"
+      const LOGIN =import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"
        const api= await fetch(`${LOGIN}/login`, {
             method: "POST",
             credentials:"include",

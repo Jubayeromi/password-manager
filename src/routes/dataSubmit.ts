@@ -5,7 +5,7 @@ type PasswordForm = {
 };
 
 export const dataSubmit = async (form: PasswordForm) => {
-  const SAVE = import.meta.env.BACKEND_URL|| "http://localhost:3000"
+  const SAVE = import.meta.env.VITE_BACKEND_URL|| "http://localhost:3000"
     const api = await fetch(`${SAVE}/save`, {
       method: "POST",
       credentials: "include",

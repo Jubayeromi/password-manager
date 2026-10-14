@@ -26,7 +26,7 @@ loginAUth.post("/login", async (req, res) => {
         if (!mailCheck) {
             return res.status(401).send({ data: "Invalid Credentials." })
         }
-        const hashedPassword = await brcypt.compare(password, mailCheck.password)
+        const hashedPassword = await brcypt.compare(password.trim(), mailCheck.password)
 
         if (hashedPassword) {
             const token = jwt.sign(

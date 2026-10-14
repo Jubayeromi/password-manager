@@ -17,12 +17,12 @@ loginRouter.post("/signup",async (req: Request<{}, { data: string }, LoginBody>,
         if(email.trim().endsWith("@gmail.com") && password.trim().length >= 8){
             await dbConnect();
 
-            if(await user.findOne({ gmail: email }) !== null){
+            if(await user.findOne({ gmail: email.trim() }) !== null){
 
                return res.status(409).send({data:"this gmail is taken"})
             } else{
-                const hashedPassword = await bcrypt.hash(password,10)
-                await user.create({ gmail: email, password:hashedPassword })
+                const hashedPassword = await bcrypt.hash(password.trim(),10)
+                await user.create({ gmail: email.trim(), password:hashedPassword })
                 res.status(201).json({ data: "recieved the data" })
             }
           
