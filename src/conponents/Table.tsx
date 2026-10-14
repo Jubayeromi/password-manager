@@ -34,7 +34,8 @@ const Table = ({ entries }: TableProps) => {
     setLoadingId(id)
 
     try {
-      const res = await fetch(`http://localhost:3000/saved/${id}/show-password`, {
+      const API_URL= import.meta.env.BACKEND_URL || "http://localhost:3000"
+      const res = await fetch(`${API_URL}/saved/${id}/show-password`, {
         method: "POST",
         credentials: "include"
       })

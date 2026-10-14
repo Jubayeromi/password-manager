@@ -11,7 +11,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const checkedLoggedIn = async () => {
             try {
-                const api = await fetch("http://localhost:3000/me", {
+                const URL= import.meta.env.BACKEND_URL ||"http://localhost:3000"
+                const api = await fetch(`${URL}/me`, {
                     credentials: "include"
                 })
                 if (api.status === 401) {
@@ -34,7 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [])
 
     const logIn = async (email: string, password: string) => {
-        const res = await fetch("http://localhost:3000/login", {
+        const API = import.meta.env.BACKEND_URL || "http://localhost:3000"
+        const res = await fetch(`${API}/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -44,15 +46,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!res.ok) {
             throw new Error(response.data ?? `Login failed (${res.status})`)
         }
-
-        const meRes = await fetch("http://localhost:3000/me", { credentials: "include" });
+        const API_URL =import.meta.env.BACKEND_URL || "http://localhost:3000"
+        const meRes = await fetch(`${API_URL}/me`, { credentials: "include" });
         if (!meRes.ok) throw new Error(`Could not load the signed-in user (${meRes.status})`)
         const meData = await meRes.json();
         setUser(meData.data);
     };
 
     const signUp = async (email: string, password: string) => {
-        const res = await fetch("http://localhost:3000/signup", {
+        const SIGNUP= import.meta.env.BACKEND_URL || "http://localhost:3000"
+        const res = await fetch(`${SIGNUP}/signup`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -64,7 +67,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const logout = async () => {
-        const res = await fetch("http://localhost:3000/logout", {
+        const LOGOUT = import.meta.env.BACKEND_URL || "http://localhost:3000"
+        const res = await fetch(`${LOGOUT}/logout`, {
             method: "POST",
             credentials: "include",
         });

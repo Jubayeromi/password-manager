@@ -5,7 +5,8 @@ type PasswordForm = {
 };
 
 export const dataSubmit = async (form: PasswordForm) => {
-    const api = await fetch("http://localhost:3000/save", {
+  const SAVE = import.meta.env.BACKEND_URL|| "http://localhost:3000"
+    const api = await fetch(`${SAVE}/save`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
