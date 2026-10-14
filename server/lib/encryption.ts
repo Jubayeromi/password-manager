@@ -1,13 +1,8 @@
 import crypto from "node:crypto";
+import { encryptionKey } from "./env.ts";
 
 const algorithm = "aes-256-gcm";
-const secret = process.env.ENCRYPTION_KEY;
-
-if (!secret) {
-  throw new Error("ENCRYPTION_KEY is missing");
-}
-
-const key = crypto.createHash("sha256").update(secret).digest();
+const key = crypto.createHash("sha256").update(encryptionKey).digest();
 
 export function encryptText(text: string) {
   const iv = crypto.randomBytes(12);

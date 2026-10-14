@@ -12,7 +12,7 @@ const Manager = () => {
   const [eye, setEye] = useState(true)
 
   const [form, setform] = useState({site:"", userName:"",password:""})
-  const [entries, setEntries] = useState<{ id: string; site: string; userName: string; password: string }[]>([])
+  const [entries, setEntries] = useState<{ id: string; site: string; userName: string }[]>([])
 
   const videoRef=useRef<HTMLVideoElement| null> (null)
 
@@ -37,12 +37,10 @@ throw new Error(`could not load sved items ${api.status}`)
         _id: string;
         site: string;
         userName: string;
-        password: string;
       }) => ({
         id: entry._id,
         site: entry.site,
         userName: entry.userName,
-        password: entry.password
       }),
     )
   }, [user])
@@ -108,9 +106,9 @@ const handleSubmit = async () => {
             <button 
             onClick={async () => {
               if(user && form.site.trim() !=='' && form.userName.trim() !=='' && form.password.trim() !==''){
-                await handleSubmit()
-                videoRef.current?.play()
                 try {
+                  await handleSubmit()
+                  videoRef.current?.play()
                   setEntries(await getData())
                 } catch (err) {
                   console.error(err, "something went wrong")
@@ -121,7 +119,7 @@ const handleSubmit = async () => {
           </div>
         </div>
       </div>
-      <Table entries={user ? entries : []} />
+      <Table key={user ? "authenticated" : "anonymous"} entries={user ? entries : []} />
     </div>
   )
 }
