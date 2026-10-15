@@ -69,7 +69,7 @@ const Navbar = () => {
 
   return (
     <nav>
-      <div className="bg-green-950 flex justify-between p-3 px-20 md:p-5 md:px-30 w-full">
+      <div className="bg-green-950 flex justify-between p-3 md:p-5 md:px-30 w-full">
 
         <div className=" font-bold text-white text-2xl">
 
@@ -91,8 +91,8 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <button onClick={() => setshowSignin(true)} className="bg-green-400 px-5 py-2 rounded-3xl text-lg text-green-950 font-bold transition-colors hover:bg-green-300 cursor-pointer active:scale-95">Sign Up</button>
-              <button onClick={() => setshowLogin(true)} className="bg-green-400 px-5 py-2 rounded-3xl text-lg text-green-950 font-bold transition-colors hover:bg-green-300 cursor-pointer active:scale-95">Log In</button>
+              <button onClick={() => setshowSignin(true)} className="bg-green-400 px-3 py-1 md:px-5 md:py-2 rounded-3xl text-sm md:text-lg text-green-950 font-bold transition-colors hover:bg-green-300 cursor-pointer active:scale-95">Sign Up</button>
+              <button onClick={() => setshowLogin(true)} className="bg-green-400 px-3 py-1 md:px-5 md:py-2 rounded-3xl text-sm md:text-lg text-green-950 font-bold transition-colors hover:bg-green-300 cursor-pointer active:scale-95">Log In</button>
             </>
           )}
         </div>
