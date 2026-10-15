@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { apiUrl } from "../routes/api.ts"
 
 type PasswordEntry = {
   id: string
@@ -34,8 +35,7 @@ const Table = ({ entries }: TableProps) => {
     setLoadingId(id)
 
     try {
-      const API_URL= import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"
-      const res = await fetch(`${API_URL}/saved/${id}/show-password`, {
+      const res = await fetch(apiUrl(`/saved/${id}/show-password`), {
         method: "POST",
         credentials: "include"
       })

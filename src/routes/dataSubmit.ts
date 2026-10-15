@@ -1,3 +1,5 @@
+import { apiUrl } from "./api.ts";
+
 type PasswordForm = {
   site: string;
   userName: string;
@@ -5,8 +7,7 @@ type PasswordForm = {
 };
 
 export const dataSubmit = async (form: PasswordForm) => {
-  const SAVE = import.meta.env.VITE_BACKEND_URL|| "http://localhost:3000"
-    const api = await fetch(`${SAVE}/save`, {
+    const api = await fetch(apiUrl("/save"), {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

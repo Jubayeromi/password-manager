@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react"
 import Table from "./Table.tsx"
 import { dataSubmit } from "../routes/dataSubmit.ts"
+import { apiUrl } from "../routes/api.ts"
 import { useAuth } from "../context/useAuth.ts";
 
 
@@ -23,8 +24,7 @@ const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
 
   const getData = useCallback(async()=>{
     if (!user) return []
-const API_URL= import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"
-    const api = await fetch( `${API_URL}/saved`, {
+    const api = await fetch(apiUrl("/saved"), {
       credentials: "include"
     })
     if (!api.ok) {

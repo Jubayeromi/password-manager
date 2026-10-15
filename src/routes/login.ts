@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
+import { apiUrl } from "./api.ts";
 
 export type Login = {
   email: string;
@@ -10,8 +11,7 @@ type LoginState = [login: Login, setLogin: Dispatch<SetStateAction<Login>>];
 export const loginAuth = async ([login,setLogin]: LoginState,setshowLogin:Dispatch<SetStateAction<boolean>>) => {
     try{
     if(login.email.trim().endsWith("@gmail.com") && login.password.trim().length >= 8){
-      const LOGIN =import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"
-       const api= await fetch(`${LOGIN}/login`, {
+       const api= await fetch(apiUrl("/login"), {
             method: "POST",
             credentials:"include",
             headers: { "Content-Type": "application/json" },

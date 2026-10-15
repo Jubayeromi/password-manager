@@ -1,4 +1,6 @@
 import express from 'express';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import loginRouter from './routes/signUp.ts';
 import cors from 'cors'
 import loginAUth from './routes/login.ts';
@@ -25,6 +27,13 @@ app.use(loginRouter)
 app.use(loginAUth)
 app.use(meAuth)
 app.use(saveRouter)
+
+const clientDistPath = fileURLToPath(new URL("../dist/", import.meta.url));
+app.use(express.static(clientDistPath));
+app.get(/.*/, (req, res, next) => {
+  if (!req.accepts("html")) return next();
+  return res.sendFile(path.join(clientDistPath, "index.html"));
+});
 
 const port = Number(process.env.PORT) || 3000;
 
