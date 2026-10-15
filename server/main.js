@@ -26,7 +26,7 @@ app.use(loginAUth)
 app.use(meAuth)
 app.use(saveRouter)
 
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 
 app.listen(port, ()=>{
     console.log(`server running on Address http://localhost:${port}`)

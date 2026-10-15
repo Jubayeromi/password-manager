@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "vite",
     "server": "nodemon --exec \"node --experimental-strip-types\" --ext js,ts server/main.js",
+    "start": "node --experimental-strip-types server/main.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "engines": {
+    "node": ">=22.6.0"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
