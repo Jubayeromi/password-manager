@@ -1,75 +1,46 @@
-# React + TypeScript + Vite
+# PassOP
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Live site:** [password-manager-6zvs.onrender.com](https://password-manager-6zvs.onrender.com/)
 
-Currently, two official plugins are available:
+![PassOP application screenshot](./public/Screenshot%202026-10-15%20214454.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+PassOP is a password manager for saving and viewing website login details. Users can create an account, sign in, and manage their saved passwords.
 
-## React Compiler
+## How it works
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Accounts:** Account passwords are hashed with bcrypt before they are stored.
+- **Sign-in:** The server issues a signed JWT in an HTTP-only cookie. The browser sends the cookie with authenticated requests.
+- **Saved passwords:** Entries belong to the signed-in user and are stored in MongoDB. Password values are encrypted by the server before storage and decrypted only when the user chooses to reveal one.
+- **Frontend and backend:** React with Vite provides the interface; an Express API handles authentication and password data.
 
-## Expanding the ESLint configuration
+## Run locally
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Install dependencies:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Create `server/.env` with:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```env
+MONGODB_URI=your-mongodb-connection-string
+JWT_SECRET=your-jwt-signing-secret
+ENCRYPTION_KEY=your-password-encryption-key
 ```
+
+Run the API and frontend in separate terminals:
+
+```sh
+npm run server
+npm run dev
+```
+
+## Build and run as one service
+
+```sh
+npm run build
+npm start
+```
+
+The Express server serves the production frontend and API from the same origin. Configure `MONGODB_URI`, `JWT_SECRET`, and `ENCRYPTION_KEY` in the hosting provider's environment settings. Keep the encryption key backed up and unchanged; existing saved passwords depend on it.
