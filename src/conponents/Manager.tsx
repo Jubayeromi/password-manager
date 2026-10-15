@@ -90,18 +90,24 @@ const handleSubmit = async () => {
         <div className="text-black flex flex-col p-4 gap-5 w-full items-center">
 
           <input onChange={handleChange} value={form.site} className="border-2 md:w-[65%] w-full p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type="text" name="site" placeholder="Enter website's Name" />
-          <div className="flex gap-5 md:w-[65%] w-full justify-between ">
-            <input onChange={handleChange} value={form.userName} className="h-10 border-2 max-w-[35%] min-w-[10%] p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type="text" name="userName" placeholder="Enter Username" />
-            <div className=" max-w-[35%] min-w-[10%] relative">
+          <div className="md:flex md:gap-5 md:w-[65%] w-full justify-between ">
+            <div className="md:flex md:gap-5 md:w-[65%] ">
 
-            <input value={form.password} onChange={handleChange} className="h-10 border-2 pr-10 p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type={eye?"text":"password"} name="password" placeholder="Enter Password" />
+<div className="flex md:gap-5 items-center">
+
+            <input onChange={handleChange} value={form.userName} className="h-10 border-2 max-w-[55%] min-w-[10%] p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type="text" name="userName" placeholder="Enter Username" />
+            <div className=" max-w-[65%] min-w-[10%] relative">
+
+            <input value={form.password} onChange={handleChange} className="h-10 w-full border-2 p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type={eye?"text":"password"} name="password" placeholder="Enter Password" />
             <span onClick={()=>{
               setEye(!eye)
-             
-            }} className="absolute right-2 top-2 cursor-pointer">
+              
+            }} className="absolute right-3 top-2 cursor-pointer">
              <img src={eye?"/openEye.svg":"/closeEye.svg" }alt="" />  
              
               </span>
+              </div>
+              </div>
             </div>
             <button 
             onClick={async () => {
@@ -115,7 +121,7 @@ const handleSubmit = async () => {
                 }
               }
             }}
-            className="border border-green-700 md:text-lg text-sm items-center justify-center active:scale-95 gap-2 px-3 cursor-pointer py-2 font-semibold rounded-full bg-green-500 flex"><video ref={videoRef}  className="md:h-10 md:w-10 w-5 h-5 bg-green-400 cursor-pointer active:scale-95 rounded-full" src="/doodle-color-49-plus-circle-hover-pinch.mp4"></video> Add Password</button>
+            className="border flex justify-self-center mt-5 border-green-700 md:text-lg text-sm items-center justify-center active:scale-95 gap-2 px-3 cursor-pointer py-2 font-semibold rounded-full bg-green-500 "><video ref={videoRef}  className="md:h-10 md:w-10 w-5 h-5 bg-green-400 cursor-pointer active:scale-95 rounded-full" src="/doodle-color-49-plus-circle-hover-pinch.mp4"></video> Add Password</button>
           </div>
         </div>
       </div>
