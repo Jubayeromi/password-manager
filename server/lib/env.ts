@@ -5,6 +5,7 @@ dotenv.config({ path: fileURLToPath(new URL("../.env", import.meta.url)) });
 
 const jwtSecret = process.env.JWT_SECRET;
 const configuredEncryptionKey = process.env.ENCRYPTION_KEY;
+const configuredMongoUri = process.env.MONGODB_URI;
 
 if (!jwtSecret) {
     throw new Error("JWT_SECRET is missing from server/.env");
@@ -14,6 +15,11 @@ if (!configuredEncryptionKey) {
     throw new Error("ENCRYPTION_KEY is missing from server/.env");
 }
 
-const encryptionKey: string = configuredEncryptionKey;
+if (!configuredMongoUri) {
+    throw new Error("MONGODB_URI is missing from server/.env");
+}
 
-export { encryptionKey, jwtSecret };
+const encryptionKey: string = configuredEncryptionKey;
+const mongoUri: string = configuredMongoUri;
+
+export { encryptionKey, jwtSecret, mongoUri };

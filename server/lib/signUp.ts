@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
+import { dbConnect } from "./database.ts";
 
-const connect = 'mongodb://localhost:27017/manager'
-
-export const dbConnect=async()=>{
-if(mongoose.connection.readyState >=1)return;
-await mongoose.connect(connect)
-}
+export { dbConnect };
 
 const loginSchema = new mongoose.Schema({
     gmail:{type:String, required:true },
