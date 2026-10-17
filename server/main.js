@@ -16,10 +16,6 @@ app.use(cookieParser());
 app.use(cors({ origin: process.env.VITE_FRONTEND_URL || "http://localhost:5173", credentials: true }))
 app.use(express.json())
 
-// type obj ={
-//     email:{type:String, required:true},
-//     password:{type:String,required:true}
-// }
 
 
 app.use(loginRouter)
