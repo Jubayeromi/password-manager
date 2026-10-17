@@ -72,8 +72,8 @@ const handleSubmit = async () => {
 
 
   return (
-    <div className="max-h-auto h-auto">
-      <div className="absolute inset-0 -z-10 bg-green-100 h-full w-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-full w-77.5 rounded-full bg-green-400 opacity-20 blur-[100px]"></div></div>
+    <div className="relative isolate min-h-screen">
+      <div className="absolute inset-0 -z-10 bg-green-100 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-full w-77.5 rounded-full bg-green-400 opacity-20 blur-[100px]"></div></div>
       <div className="flex flex-col items-center w-full md:pt-20">
         <div className="text-center">
 
@@ -89,7 +89,7 @@ const handleSubmit = async () => {
         </div>
         <div className="text-black flex flex-col p-4 gap-5 w-full items-center">
 
-          <input onChange={handleChange} value={form.site} className="border-2 md:w-[65%] w-full p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type="text" name="site" placeholder="Enter website's Name" />
+          <input onChange={handleChange} value={form.site} className="border-2 md:w-[65%] h-10 w-full p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type="text" name="site" placeholder="Enter website's Name" />
           <div className="md:flex md:gap-5 md:w-[65%] w-full justify-between ">
             <div className="md:flex md:gap-5 md:w-[65%] ">
 
