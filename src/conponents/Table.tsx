@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { apiUrl } from "../routes/api.ts"
+import DeleteButton from "./ui/DeleteButton.tsx"
+
 
 type PasswordEntry = {
   id: string
@@ -112,7 +114,7 @@ const Table = ({ entries }: TableProps) => {
                     </span>
                     </div>
                   </td>
-                  <td className="px-2 py-4 text-right font-semibold text-green-900 md:px-5">edit</td>
+                  <td className="px-2 py-4 text-right font-semibold text-green-900 md:px-5"><DeleteButton/></td>
                 </tr>
               ))
             )}

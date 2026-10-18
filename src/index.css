@@ -1,2 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap");
 @import "tailwindcss";
+
+.trash-icon {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+/* Animate the lid when hovering over the icon */
+.trash-icon:hover .trash-lid {
+    transform: rotate(-15deg) translateY(-2px);
+    transform-origin: left center;
+    transition: transform 0.2s ease-in-out;
+}
