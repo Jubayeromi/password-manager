@@ -11,11 +11,38 @@ type PasswordEntry = {
 
 type TableProps = {
   entries: PasswordEntry[]
+  onDelete: (id: string) => Promise<void>
 }
 
-const Table = ({ entries }: TableProps) => {
+const Table = ({ entries, onDelete }: TableProps) => {
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, string>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [deletingIds, setDeletingIds] = useState<Record<string, boolean>>({});
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    setDeleteError(null);
+    setDeletingIds((current) => ({ ...current, [id]: true }));
+
+    try {
+      await onDelete(id);
+      setRevealedPasswords((current) => {
+        const next = { ...current };
+        delete next[id];
+        return next;
+      });
+    } catch (err) {
+      console.error(err, "Could not delete password");
+      setDeleteError(err instanceof Error ? err.message : "Could not delete password");
+    } finally {
+      setDeletingIds((current) => {
+        const next = { ...current };
+        delete next[id];
+        return next;
+      });
+    }
+  }
+
   const copyText = async (password: string) => {
     try {
       await navigator.clipboard.writeText(password);
@@ -62,6 +89,7 @@ const Table = ({ entries }: TableProps) => {
   return (
     <div className="w-full max-w-5xl flex flex-col justify-self-center">
       <h1 className="ml-2 font-bold text-2xl">Your Passwords</h1>
+      {deleteError && <p role="alert" className="mt-2 text-red-700">{deleteError}</p>}
       <div className="mx-auto mt-6 w-full rounded-2xl border border-green-200 bg-white shadow-sm">
         <table className="w-full table-fixed text-left rounded-t-2xl overflow-hidden">
           <thead className="bg-green-800 text-green-100 ">
@@ -87,7 +115,7 @@ const Table = ({ entries }: TableProps) => {
                   <td className="px-1 py-4 font-semibold text-green-900 md:px-5">
                     <div className="flex items-center justify-between gap-1">
                     <span className="min-w-0 break-all">{revealedPasswords[id] ?? "••••••••"}</span>
-                    <span className="flex shrink-0 md:gap-5">
+                    <span className="flex shrink-0 md:gap-3">
                       <button
                         type="button"
                         onClick={() => void copyText(revealedPasswords[id])}
@@ -114,7 +142,12 @@ const Table = ({ entries }: TableProps) => {
                     </span>
                     </div>
                   </td>
-                  <td className="px-2 py-4 text-right font-semibold text-green-900 md:px-5"><DeleteButton/></td>
+                  <td className="px-2 py-4 text-right font-semibold text-green-900 md:px-5">
+                    <DeleteButton
+                      onDelete={() => handleDelete(id)}
+                      disabled={Boolean(deletingIds[id])}
+                    />
+                  </td>
                 </tr>
               ))
             )}

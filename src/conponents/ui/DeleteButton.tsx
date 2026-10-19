@@ -1,23 +1,33 @@
 import { useState } from 'react';
 import './DeleteButton.css';
 
-export default function DeleteButton() {
+type DeleteButtonProps = {
+  onDelete: () => Promise<void>;
+  disabled: boolean;
+};
+
+export default function DeleteButton({ onDelete, disabled }: DeleteButtonProps) {
   const [isClicked, setIsClicked] = useState(false);
 
-  const handleClick = () => {
-    if (isClicked) return;
+  const handleClick = async () => {
+    if (isClicked || disabled) return;
     setIsClicked(true);
 
     setTimeout(() => {
       setIsClicked(false);
     }, 400);
+
+    await onDelete();
   };
 
   return (
     <button 
       className={`delete-btn ${isClicked ? 'clicked' : ''}`} 
-      onClick={handleClick}
+      onClick={() => void handleClick()}
+      disabled={disabled}
       type="button"
+      aria-label="Delete saved password"
+      title={disabled ? "Deleting password" : "Delete saved password"}
     >
       <div className="trash-icon">
         <svg 

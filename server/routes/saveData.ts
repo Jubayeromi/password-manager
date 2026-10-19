@@ -1,4 +1,5 @@
 import { Router } from "express";
+import mongoose from "mongoose";
 import { dbConnect, userData } from "../lib/dataDb.ts";
 import { authMiddleware } from "../middleware/authMiddleware.ts";
 import { encryptText, decryptText } from "../lib/encryption.ts";
@@ -121,6 +122,31 @@ saveRouter.post("/saved/:id/show-password", authMiddleware, async (req, res) => 
   } catch (err) {
     console.error(err, "Failed to reveal password");
     return res.status(500).json({ data: "Could not reveal password" });
+  }
+});
+
+saveRouter.delete("/saved/:id", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ data: "Invalid password ID" });
+    }
+
+    await dbConnect();
+    const deletedEntry = await userData.findOneAndDelete({
+      _id: id,
+      user: req.userId,
+    });
+
+    if (!deletedEntry) {
+      return res.status(404).json({ data: "Password not found" });
+    }
+
+    return res.status(200).json({ data: "Password deleted" });
+  } catch (err) {
+    console.error(err, "Could not delete password");
+    return res.status(500).json({ data: "Could not delete password" });
   }
 });
 

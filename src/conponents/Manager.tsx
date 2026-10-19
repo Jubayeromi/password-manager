@@ -71,6 +71,22 @@ const handleSubmit = async () => {
 }
 
 
+
+const handleDelete = async (id: string) => {
+  const res = await fetch(apiUrl(`/saved/${id}`), {
+    method: "DELETE",
+    credentials: "include",
+  });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.data || "Could not delete password");
+  }
+
+  setEntries((current) => current.filter((entry) => entry.id !== id));
+}
+
+
   return (
     <div className="relative isolate min-h-screen">
       <div className="absolute inset-0 -z-10 bg-green-100 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-full w-77.5 rounded-full bg-green-400 opacity-20 blur-[100px]"></div></div>
@@ -125,7 +141,11 @@ const handleSubmit = async () => {
           </div>
         </div>
       </div>
-      <Table key={user ? "authenticated" : "anonymous"} entries={user ? entries : []} />
+      <Table
+        key={user ? "authenticated" : "anonymous"}
+        entries={user ? entries : []}
+        onDelete={handleDelete}
+      />
     </div>
   )
 }
