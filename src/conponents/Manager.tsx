@@ -12,23 +12,23 @@ const Manager = () => {
 
   const [eye, setEye] = useState(true)
 
-  const [form, setform] = useState({site:"", userName:"",password:""})
+  const [form, setform] = useState({ site: "", userName: "", password: "" })
   const [entries, setEntries] = useState<{ id: string; site: string; userName: string }[]>([])
 
-  const videoRef=useRef<HTMLVideoElement| null> (null)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
-const handleChange =(e:ChangeEvent<HTMLInputElement>)=>{
-  setform({...form,[e.target.name]:e.target.value})
-}
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setform({ ...form, [e.target.name]: e.target.value })
+  }
 
 
-  const getData = useCallback(async()=>{
+  const getData = useCallback(async () => {
     if (!user) return []
     const api = await fetch(apiUrl("/saved"), {
       credentials: "include"
     })
     if (!api.ok) {
-throw new Error(`could not load sved items ${api.status}`)
+      throw new Error(`could not load sved items ${api.status}`)
     }
 
     const Data = await api.json()
@@ -45,46 +45,46 @@ throw new Error(`could not load sved items ${api.status}`)
     )
   }, [user])
 
-useEffect(() => {
-  if (!user) return
+  useEffect(() => {
+    if (!user) return
 
-  let isCurrent = true
-  void getData()
-    .then((data) => {
-      if (isCurrent) setEntries(data)
-    })
-    .catch((err) => {
-      console.error(err, "something went wrong")
-    })
+    let isCurrent = true
+    void getData()
+      .then((data) => {
+        if (isCurrent) setEntries(data)
+      })
+      .catch((err) => {
+        console.error(err, "something went wrong")
+      })
 
-  return () => {
-    isCurrent = false
-  }
-}, [getData, user])
-
-
-const handleSubmit = async () => {
-  if (!form.site.trim() || !form.userName.trim() || !form.password.trim()) return
-
-  await dataSubmit(form)
-  setform({ site: "", userName: "", password: "" })
-}
+    return () => {
+      isCurrent = false
+    }
+  }, [getData, user])
 
 
+  const handleSubmit = async () => {
+    if (!form.site.trim() || !form.userName.trim() || !form.password.trim()) return
 
-const handleDelete = async (id: string) => {
-  const res = await fetch(apiUrl(`/saved/${id}`), {
-    method: "DELETE",
-    credentials: "include",
-  });
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.data || "Could not delete password");
+    await dataSubmit(form)
+    setform({ site: "", userName: "", password: "" })
   }
 
-  setEntries((current) => current.filter((entry) => entry.id !== id));
-}
+
+
+  const handleDelete = async (id: string) => {
+    const res = await fetch(apiUrl(`/saved/${id}`), {
+      method: "DELETE",
+      credentials: "include",
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.data || "Could not delete password");
+    }
+
+    setEntries((current) => current.filter((entry) => entry.id !== id));
+  }
 
 
   return (
@@ -109,35 +109,39 @@ const handleDelete = async (id: string) => {
           <div className="md:flex md:gap-5 md:w-[65%] w-full justify-between ">
             <div className="md:flex md:gap-5 md:w-[65%] ">
 
-<div className="flex md:gap-5 items-center">
+              <div className="flex md:gap-5 items-center">
 
-            <input onChange={handleChange} value={form.userName} className="h-10 border-2 max-w-[55%] min-w-[10%] p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type="text" name="userName" placeholder="Enter Username" />
-            <div className=" max-w-[65%] min-w-[10%] relative">
+                <input onChange={handleChange} value={form.userName} className="h-10 border-2 max-w-[55%] min-w-[10%] p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type="text" name="userName" placeholder="Enter Username" />
+                <div className=" max-w-[65%] min-w-[10%] relative">
 
-            <input value={form.password} onChange={handleChange} className="h-10 w-full border-2 p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type={eye?"text":"password"} name="password" placeholder="Enter Password" />
-            <span onClick={()=>{
-              setEye(!eye)
-              
-            }} className="absolute right-3 top-2 cursor-pointer">
-             <img src={eye?"/openEye.svg":"/closeEye.svg" }alt="" />  
-             
-              </span>
-              </div>
+                  <input value={form.password} onChange={handleChange} className="h-10 w-full border-2 p-0.5 px-3 font-bold text-lg border-green-600 rounded-2xl" type={eye ? "text" : "password"} name="password" placeholder="Enter Password" />
+                  <span onClick={() => {
+                    setEye(!eye)
+
+                  }} className="absolute right-3 top-2 cursor-pointer">
+                    <img src={eye ? "/openEye.svg" : "/closeEye.svg"} alt="" />
+
+                  </span>
+                </div>
               </div>
             </div>
-            <button 
-            onClick={async () => {
-              if(user && form.site.trim() !=='' && form.userName.trim() !=='' && form.password.trim() !==''){
-                try {
-                  await handleSubmit()
-                  videoRef.current?.play()
-                  setEntries(await getData())
-                } catch (err) {
-                  console.error(err, "something went wrong")
+            <button
+              onClick={async () => {
+                if (!user) {
+                  alert("please log in")
                 }
-              }
-            }}
-            className="border flex justify-self-center mt-5 border-green-700 md:text-lg text-sm items-center justify-center active:scale-95 gap-2 px-3 cursor-pointer py-2 font-semibold rounded-full bg-green-500 "><video ref={videoRef}  className="md:h-10 md:w-10 w-5 h-5 bg-green-400 cursor-pointer active:scale-95 rounded-full" src="/doodle-color-49-plus-circle-hover-pinch.mp4"></video> Add Password</button>
+                if (user && form.site.trim() !== '' && form.userName.trim() !== '' && form.password.trim() !== '') {
+                  try {
+
+                    await handleSubmit()
+                    videoRef.current?.play()
+                    setEntries(await getData())
+                  } catch (err) {
+                    console.error(err, "something went wrong")
+                  }
+                }
+              }}
+              className="border flex justify-self-center mt-5 border-green-700 md:text-lg text-sm items-center justify-center active:scale-95 gap-2 px-3 cursor-pointer py-2 font-semibold rounded-full bg-green-500 "><video ref={videoRef} className="md:h-10 md:w-10 w-5 h-5 bg-green-400 cursor-pointer active:scale-95 rounded-full" src="/doodle-color-49-plus-circle-hover-pinch.mp4"></video> Add Password</button>
           </div>
         </div>
       </div>
