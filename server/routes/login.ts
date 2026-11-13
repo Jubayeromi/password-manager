@@ -34,7 +34,7 @@ loginAUth.post("/login", async (req, res) => {
                 jwtSecret,
                 { expiresIn: "7d" }
             );
-
+// jwt cookie is added and the expiry limit is 7 days
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
